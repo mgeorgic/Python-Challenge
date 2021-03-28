@@ -1,86 +1,102 @@
-
-# Import os module to create file paths across operating systems
-# Import csv module for reading CSV files
-import os
+#Import Modules
+import os 
 import csv
-import statistics
 
 # Set a path to collect the CSV data from the Resources folder
-pypollcsv  = os.path.join("Resources", "election_data.csv")
+pypollcsv = os.path.join('Resources', 'election_data.csv')
 
-# make candidate bucket
-candidate_list = []
-# blah
-# Open the CSV in reader mode using the path above Pypollcsv
-with open(pypollcsv) as csvfile:
+# Empty Lists to store data in and a counter for total votes 
+candidates = []
+number_voters = []
+percent_votes = []
+total_votes = 0
+
+# Open the CSV in reader mode using the path above PyPollcsv
+with open (pypollcsv, newline="") as csvfile:
+    
     # Specifies delimiter and variable that holds contents
-    csvreader = csv.reader(csvfile, delimiter=",")
-    
-    # skip header
-    csv_header = next(csvfile)
-    
-    # for loop to find candidate names
-    for row in csvreader:
-        if row[2] not in candidate_list:
-            candidate_list.append(row[2])
-    
-    print(f'List of candidates: {candidate_list}')
+    csvreader = csv.reader(csvfile, delimiter=',') 
+   
+    # The file has a header so skip it
+    header = next(csvreader)
 
-# for loop to total the votes
+    # for loop to find unique candidate names
+    for row in csvreader:
+        # Count in votes
+        total_votes = total_votes + 1 
+		
+        #Find the list of candidates 
+        if row[2] not in candidates:
+            candidates.append(row[2])
+    
+    print(f'List of candidates: {candidates}')
+
+# for loop to calculate votes
 with open(pypollcsv) as csvfile:
     csvreader = csv.reader(csvfile, delimiter=",")
     csv_header = next(csvfile)
 
-    # Variables
+    # Candidate counters
+    khan_voters = 0
+    correy_voters = 0
+    li_voters = 0
+    otooley_voters = 0
 
-    Khan_votes = 0
-    Correy_votes = 0
-    Li_votes = 0
-    OTooley_votes = 0   
+    # Read through each row of data after the header
     for row in csvreader:
-        if row[2] == candidate_list[0]:
-            Khan_votes += 1
-        elif row[2] == candidate_list[1]:
-            Correy_votes += 1
-        elif row[2] == candidate_list[2]:
-            Li_votes += 1
-        elif row[2] == candidate_list[3]:
-            OTooley_votes += 1
-total_votes = Khan_votes + Correy_votes + Li_votes + OTooley_votes
-print("Election Results")
-print("---------------------------------------------------------")
-print(f'Total Votes: {total_votes}')
-print("---------------------------------------------------------")
-print(f'Khan: {round((Khan_votes/total_votes)*100,3)} ({Khan_votes})')
-print(f'Correy: {round((Correy_votes/total_votes)*100,3)}% ({Correy_votes})')
-print(f'Li: {round((Li_votes/total_votes)*100,3)}% ({Li_votes})')
-print(f"O'Tooley: {round((OTooley_votes/total_votes)*100,3)}% ({OTooley_votes})")
-print("-------------------------------------------------")
-if Khan_votes > Correy_votes and Khan_votes > Li_votes and Khan_votes > OTooley_votes:
-    winner = "Khan"
-    # print("Winner: Khan")
-elif Correy_votes > Khan_votes and Correy_votes > Li_votes and Correy_votes > OTooley_votes:
-    winner = "Correy"
-    # print("Winner: Correy")
-elif Li_votes > Khan_votes and Li_votes > Correy_votes and Li_votes > OTooley_votes:
-    winner = "Li"
-    # print("Winner: Li")
-elif OTooley_votes >= Khan_votes and OTooley_votes >= Li_votes and OTooley_votes >= Correy_votes:
-    winner = "O'Tooley"
-    # print("Winner: O'Tooley")
-print(f'Winner: {winner}')
-print("-----------------------------------------------------------")
-output_path = os.path.join('analysis','Election_data_simplified.txt') 
-with open(output_path, 'w', newline ='') as csvfile:
-    csvwriter = csv.writer(csvfile, delimiter=',')
-    csvwriter.writerow(["Election Results"])
-    csvwriter.writerow(["----------------------------------------"])
-    csvwriter.writerow([f'Total Votes: {total_votes}'])
-    csvwriter.writerow(["-----------------------------------------"])
-    csvwriter.writerow([f'Khan: {round((Khan_votes/total_votes)*100,3)}% ({Khan_votes})'])
-    csvwriter.writerow([f'Correy: {round((Correy_votes/total_votes)*100,3)}% ({Correy_votes})'])
-    csvwriter.writerow([f'Li: {round((Li_votes/total_votes)*100,3)}% ({Li_votes})'])
-    csvwriter.writerow([f"O'Tooley: {round((OTooley_votes/total_votes)*100,3)}% ({OTooley_votes})"])
-    csvwriter.writerow(["-------------------------------------------------"])
-    csvwriter.writerow([f'Winner: {winner}'])
-    csvwriter.writerow(["------------------------------------"])
+    
+    # Calculate each candidate's number of votes
+        if row[2] == candidates[0]:
+            khan_voters = khan_voters + 1
+        elif row[2] == candidates[1]:
+            correy_voters = correy_voters + 1
+        elif row[2] == candidates[2]:
+            li_voters = li_voters + 1
+        elif row[2] == candidates[3]:
+            otooley_voters = otooley_voters + 1
+   
+    # Calculate Percentage Of Votes Each Candidate Won
+    kahn_percent = khan_voters / total_votes
+    correy_percent = correy_voters / total_votes
+    li_percent = li_voters / total_votes
+    otooley_percent = otooley_voters / total_votes
+    
+    # Calculate total voters
+    total_votes = khan_voters + correy_voters + li_voters + otooley_voters
+    
+    # Calculate Winner Of The Election Based On Popular Vote
+    winner = max(khan_voters, correy_voters, li_voters, otooley_voters)
+
+    if winner == khan_voters:
+        winner_name = "Khan"
+    elif winner == correy_voters:
+        winner_name = "Correy"
+    elif winner == li_voters:
+        winner_name = "Li"
+    else:
+        winner_name = "O'Tooley" 
+        
+# Print Answers
+# Range 0:.3% gives you accuracy
+# F-String allows for all data types
+# Print tests
+
+report = f"""Election Results
+-------------------------------------
+Total Votes: " + str(total_votes)
+-------------------------------------
+Kahn: {kahn_percent:.3%}({khan_voters})
+Correy: {correy_percent:.3%}({correy_voters})
+Li: {li_percent:.3%}({li_voters})
+O'Tooley: {otooley_percent:.3%}({otooley_voters})
+-------------------------------------
+Winner: {winner_name}
+-------------------------------------"""
+
+# Export the file to write
+output_path = os.path.join('analysis','Simplified_election_data.txt') 
+# Open the file using write mode while holding the contents in the file
+with open(output_path,'w') as txtfile: 
+    
+    # Write text file in the above order
+    txtfile.write(report)
