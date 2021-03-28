@@ -10,7 +10,7 @@ pypollcsv  = os.path.join("Resources", "election_data.csv")
 
 # make candidate bucket
 candidate_list = []
-
+# blah
 # Open the CSV in reader mode using the path above Pypollcsv
 with open(pypollcsv) as csvfile:
     # Specifies delimiter and variable that holds contents
