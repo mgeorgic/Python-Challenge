@@ -83,7 +83,7 @@ with open(pypollcsv) as csvfile:
 
 report = f"""Election Results
 -------------------------------------
-Total Votes: " + str(total_votes)
+Total Votes: {total_votes}
 -------------------------------------
 Kahn: {kahn_percent:.3%}({khan_voters})
 Correy: {correy_percent:.3%}({correy_voters})
